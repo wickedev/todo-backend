@@ -1,0 +1,86 @@
+version: v1beta6
+commands:
+  - name: prod
+    command: 'devspace deploy -p production'
+images:
+  dev:
+    image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-dev
+    dockerfile: ./dockerfiles/dev.dockerfile
+  prod:
+    image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-prod
+    dockerfile: ./dockerfiles/prod.dockerfile
+deployments:
+  - name: database
+    helm:
+      wait: true
+      chart:
+        name: stable/postgresql
+        version: '8.1.4'
+      values:
+        postgresqlDatabase: 'db_app'
+        postgresqlUsername: 'db_user'
+        postgresqlPassword: ${DB_PASSWORD}
+  - name: todo-backend
+    helm:
+      componentChart: true
+      values:
+        containers:
+          - image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-dev
+            env:
+              - name: DB_NAME
+                value: 'db_app'
+              - name: DB_USER
+                value: 'db_user'
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: database-postgresql
+                    key: postgresql-password
+        service:
+          ports:
+            - port: 3000
+dev:
+  ports:
+    - imageName: dev
+      forward:
+        - port: 3000
+  open:
+    - url: http://localhost:3000
+  sync:
+    - imageName: dev
+      excludePaths:
+        - Dockerfile
+        - node_modules/
+        - devspace.yaml
+  interactive:
+    images:
+      - name: dev
+        cmd: ['sleep', '999999']
+    terminal:
+      imageName: dev
+      command: ['yarn', 'start']
+profiles:
+  - name: production
+    patches:
+      - op: replace
+        path: deployments[1].helm.values.containers[0].image
+        value: dscr.io/${DEVSPACE_USERNAME}/todo-backend-prod
+      - op: add
+        path: deployments[0].helm.values.autoScaling
+        value:
+          horizontal:
+            maxReplicas: 10
+            averageCPU: 800m
+      - op: add
+        path: deployments[0].helm.values.ingress
+        value:
+          rules:
+            - host: todo.codesanctum.net
+              path: /api/?(.*)
+          annotations:
+            nginx.ingress.kubernetes.io/rewrite-target: /$1
+vars:
+  - name: DB_PASSWORD
+    question: 'Please enter your database password:'
+    source: all
+    password: true

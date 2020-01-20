@@ -1,0 +1,140 @@
+{
+    "name": "todo-backend",
+    "version": "1.0.0",
+    "description": "todo api backend",
+    "main": "src/index.ts",
+    "repository": "http://github.com/wickedev/todo-backend",
+    "author": "Ryan Yang",
+    "license": "MIT",
+    "scripts": {
+        "start": "webpack --watch",
+        "dev": "devspace dev -i",
+        "start:prod": "NODE_ENV=production node build/server.js",
+        "build": "NODE_ENV=production webpack",
+        "lint": "eslint --ext .ts,.tsx src/"
+    },
+    "dependencies": {
+        "pg": "^7.17.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.8.3",
+        "@babel/plugin-proposal-class-properties": "^7.8.3",
+        "@babel/plugin-proposal-decorators": "^7.8.3",
+        "@babel/plugin-syntax-optional-chaining": "^7.8.3",
+        "@babel/preset-env": "^7.8.3",
+        "@babel/preset-typescript": "^7.8.3",
+        "@types/express": "^4.17.2",
+        "@types/node": "^13.1.8",
+        "@typescript-eslint/eslint-plugin": "^2.16.0",
+        "@typescript-eslint/parser": "^2.16.0",
+        "babel-loader": "^8.0.6",
+        "babel-plugin-transform-typescript-metadata": "^0.2.2",
+        "body-parser": "^1.19.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.9.0",
+        "eslint-plugin-prettier": "^3.1.2",
+        "express": "^4.17.1",
+        "express-requests-logger": "^2.0.6",
+        "prettier": "^1.19.1",
+        "start-server-webpack-plugin": "^2.2.5",
+        "terser-webpack-plugin": "^2.3.2",
+        "tsconfig-paths-webpack-plugin": "^3.2.0",
+        "typeorm": "^0.2.22",
+        "typescript": "^3.7.5",
+        "webpack": "^4.41.5",
+        "webpack-cli": "^3.3.10"
+    },
+    "babel": {
+        "presets": [
+            [
+                "@babel/preset-env",
+                {
+                    "targets": {
+                        "node": "current",
+                        "esmodules": true
+                    }
+                }
+            ],
+            [
+                "@babel/preset-typescript",
+                {
+                    "isTSX": true,
+                    "allExtensions": true
+                }
+            ]
+        ],
+        "plugins": [
+            "babel-plugin-transform-typescript-metadata",
+            "@babel/plugin-syntax-optional-chaining",
+            [
+                "@babel/plugin-proposal-decorators",
+                {
+                    "legacy": true
+                }
+            ],
+            [
+                "@babel/plugin-proposal-class-properties",
+                {
+                    "loose": true
+                }
+            ]
+        ]
+    },
+    "prettier": {
+        "parser": "typescript",
+        "trailingComma": "all",
+        "semi": false,
+        "singleQuote": true,
+        "overrides": [
+            {
+                "files": "*.json",
+                "options": {
+                    "parser": "json"
+                }
+            },
+            {
+                "files": "*.yaml",
+                "options": {
+                    "parser": "yaml",
+                    "tabWidth": 2
+                }
+            }
+        ]
+    },
+    "eslintConfig": {
+        "root": true,
+        "overrides": [
+            {
+                "files": [
+                    "*.ts",
+                    "*.tsx"
+                ],
+                "parser": "@typescript-eslint/parser",
+                "parserOptions": {
+                    "ecmaVersion": 6,
+                    "sourceType": "module",
+                    "ecmaFeatures": {
+                        "modules": true
+                    }
+                },
+                "plugins": [
+                    "@typescript-eslint"
+                ],
+                "rules": {},
+                "extends": [
+                    "prettier",
+                    "prettier/@typescript-eslint"
+                ]
+            }
+        ],
+        "plugins": [
+            "prettier"
+        ],
+        "rules": {
+            "prettier/prettier": "error"
+        },
+        "extends": [
+            "prettier"
+        ]
+    }
+}
