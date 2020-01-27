@@ -9,6 +9,8 @@ images:
   production:
     image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-prod
     dockerfile: ./dockerfiles/prod.dockerfile
+    build:
+      disabled: true
 deployments:
   - name: database
     helm:
@@ -62,6 +64,12 @@ dev:
 profiles:
   - name: production
     patches:
+      - op: add
+        path: images.development.build
+        value:
+          disabled: true
+      - op: remove
+        path: images.production.build
       - op: replace
         path: deployments[1].helm.values.containers[0].image
         value: dscr.io/${DEVSPACE_USERNAME}/todo-backend-prod
