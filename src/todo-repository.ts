@@ -1,6 +1,6 @@
 import { createConnection, Repository } from 'typeorm'
-import { TodoTable } from '~/todo-table'
-import { TodoItem } from '~/todo-entity'
+import { ToDoTable } from '~/todo-table'
+import { ToDoItem } from '~/todo-entity'
 
 const mode =
     process.env.NODE_ENV === 'production' ? 'production' : 'development'
@@ -13,12 +13,12 @@ export const connection = createConnection({
     database: process.env.DB_NAME || 'db_app',
     username: process.env.DB_USER || 'db_user',
     password: process.env.DB_PASSWORD,
-    entities: [TodoTable],
+    entities: [ToDoTable],
     synchronize: true,
     logging: isDevMode,
 })
 
-export async function getTodoRepository(): Promise<Repository<TodoItem>> {
+export async function getToDoRepository(): Promise<Repository<ToDoItem>> {
     const conn = await connection
-    return conn.getRepository(TodoTable)
+    return conn.getRepository(ToDoTable)
 }

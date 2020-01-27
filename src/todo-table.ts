@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
-import { TodoItem } from '~/todo-entity'
+import { ToDoItem } from '~/todo-entity'
 
 @Entity()
-export class TodoTable extends TodoItem {
+export class ToDoTable extends ToDoItem {
     @PrimaryGeneratedColumn()
     id!: number
 

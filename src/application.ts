@@ -1,11 +1,9 @@
-import http, { Server } from 'http'
 import express from 'express'
 import bodyParser from 'body-parser'
 import { Repository } from 'typeorm'
-// @ts-ignore
 import aduit from 'express-requests-logger'
-import { getTodoRepository } from '~/todo-repository'
-import { TodoItem } from '~/todo-entity'
+import { getToDoRepository } from '~/todo-repository'
+import { ToDoItem } from '~/todo-entity'
 import { wrapAsync } from '~/utils'
 
 const port = process.env.PORT || 3000
@@ -13,41 +11,45 @@ const port = process.env.PORT || 3000
 export class Application {
     public static bootstrap(): Promise<Application> {
         return (async () => {
-            const todoRepository = await getTodoRepository()
+            const todoRepository = await getToDoRepository()
             return new Application(todoRepository)
         })()
     }
 
     private readonly app: express.Application
 
-    constructor(private readonly todoRepository: Repository<TodoItem>) {
+    constructor(private readonly todoRepository: Repository<ToDoItem>) {
         this.app = express()
             .use(aduit())
             .use(bodyParser.json())
-            .get('/todos', wrapAsync(this.getTodos))
-            .get('/todo/:id', wrapAsync(this.getTodo))
-            .post('/todo', wrapAsync(this.createTodo))
-            .patch('/todo/:id', wrapAsync(this.updateTodo))
-            .delete('/todo/:id', wrapAsync(this.deleteTodo))
+            .get('/todos', wrapAsync(this.getToDos))
+            .get('/todo/:id', wrapAsync(this.getToDo))
+            .post('/todo', wrapAsync(this.createToDo))
+            .patch('/todo/:id', wrapAsync(this.updateToDo))
+            .delete('/todo/:id', wrapAsync(this.deleteToDo))
             .use(this.errorHandler)
     }
 
-    private createTodo = async (
+    private createToDo = async (
         req: express.Request,
         res: express.Response,
     ) => {
         const { title } = req.body
-        const todo = TodoItem.create(title)
+        const todo = ToDoItem.create(title)
         const result = await this.todoRepository.save(todo)
         res.json(result)
     }
 
-    private getTodos = async (req: express.Request, res: express.Response) => {
-        const result = await this.todoRepository.find()
+    private getToDos = async (req: express.Request, res: express.Response) => {
+        const result = await this.todoRepository.find({
+            order: {
+                id: 'ASC',
+            },
+        })
         res.json(result)
     }
 
-    private getTodo = async (req: express.Request, res: express.Response) => {
+    private getToDo = async (req: express.Request, res: express.Response) => {
         const id = req.params.id
         const result = await this.todoRepository.findOne(id)
 
@@ -59,7 +61,7 @@ export class Application {
         res.json(result)
     }
 
-    private updateTodo = async (
+    private updateToDo = async (
         req: express.Request,
         res: express.Response,
     ) => {
@@ -69,7 +71,7 @@ export class Application {
         res.json(result)
     }
 
-    private deleteTodo = async (
+    private deleteToDo = async (
         req: express.Request,
         res: express.Response,
     ) => {
@@ -82,7 +84,6 @@ export class Application {
         error: Error,
         req: express.Request,
         res: express.Response,
-        next: express.NextFunction,
     ) => {
         res.status(500).json({ message: error.message })
     }

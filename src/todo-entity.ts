@@ -1,6 +1,6 @@
-export abstract class TodoItem {
-    public static create(title: string): TodoItem {
-        return new (class extends TodoItem {
+export abstract class ToDoItem {
+    public static create(title: string): ToDoItem {
+        return new (class extends ToDoItem {
             id: number = 0
             title: string = title
             completed: boolean = false
