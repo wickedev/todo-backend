@@ -80,10 +80,10 @@ profiles:
             maxReplicas: 10
             averageCPU: 800m
       - op: add
-        path: deployments[0].helm.values.ingress
+        path: deployments[1].helm.values.ingress
         value:
           rules:
-            - host: todo.codesanctum.net
+            - host: ${HOSTNAME}
               path: /api/?(.*)
           annotations:
             nginx.ingress.kubernetes.io/rewrite-target: /$1
@@ -92,3 +92,6 @@ vars:
     question: 'Please enter your database password:'
     source: all
     password: true
+  - name: HOSTNAME
+    question: 'Please enter your host name:'
+    source: all
