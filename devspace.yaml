@@ -3,10 +3,10 @@ commands:
   - name: prod
     command: 'devspace deploy -p production'
 images:
-  dev:
+  development:
     image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-dev
     dockerfile: ./dockerfiles/dev.dockerfile
-  prod:
+  production:
     image: dscr.io/${DEVSPACE_USERNAME}/todo-backend-prod
     dockerfile: ./dockerfiles/prod.dockerfile
 deployments:
@@ -41,23 +41,23 @@ deployments:
             - port: 3000
 dev:
   ports:
-    - imageName: dev
+    - imageName: development
       forward:
         - port: 3000
   open:
     - url: http://localhost:3000
   sync:
-    - imageName: dev
+    - imageName: development
       excludePaths:
         - Dockerfile
         - node_modules/
         - devspace.yaml
   interactive:
     images:
-      - name: dev
+      - name: development
         cmd: ['sleep', '999999']
     terminal:
-      imageName: dev
+      imageName: development
       command: ['yarn', 'start']
 profiles:
   - name: production
