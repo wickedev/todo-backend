@@ -1,7 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import { Repository } from 'typeorm'
-import aduit from 'express-requests-logger'
+import morgan from 'morgan'
 import { getToDoRepository } from '~/todo-repository'
 import { ToDoItem } from '~/todo-entity'
 import { wrapAsync } from '~/utils'
@@ -20,7 +20,7 @@ export class Application {
 
     constructor(private readonly todoRepository: Repository<ToDoItem>) {
         this.app = express()
-            .use(aduit())
+            .use(morgan('combined'))
             .use(bodyParser.json())
             .get('/todos', wrapAsync(this.getToDos))
             .get('/todo/:id', wrapAsync(this.getToDo))
@@ -84,8 +84,13 @@ export class Application {
         error: Error,
         req: express.Request,
         res: express.Response,
+        next: express.NextFunction,
     ) => {
-        res.status(500).json({ message: error.message })
+        if (res.status) {
+            res.status(500).json({ message: error.message })
+        } else {
+            next(error)
+        }
     }
 
     public start() {

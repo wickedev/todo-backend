@@ -93,6 +93,5 @@ module.exports = {
         'sql.js',
         'sqlite3',
         'typeorm-aurora-data-api-driver',
-        'dtrace-provider',
     ],
 }
