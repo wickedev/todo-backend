@@ -33,6 +33,7 @@ const plugins = isDevMode
       ]
     : []
 
+// noinspection WebpackConfigHighlighting
 module.exports = {
     mode,
     plugins,
@@ -92,5 +93,6 @@ module.exports = {
         'sql.js',
         'sqlite3',
         'typeorm-aurora-data-api-driver',
+        'dtrace-provider',
     ],
 }
